@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 新增：手机视口适配 -->
+    <title>员工签到</title>
+    <link rel="stylesheet" href="/css/login.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+</head>
+<body>
+    <div class="login-container" id="app">
+        <h2>员工签到</h2>
+        <div class="form-group">
+            <button 
+                class="sign-btn"
+                @click="handleSignIn"
+                :disabled="!isInRange || !isTokenValid"
+            >
+                {{ isInRange && isTokenValid ? '点击签到' : '无法签到' }}
+            </button>
+        </div>
+        <p v-if="!isTokenValid" style="color: #ff4d4f;">登录状态已失效，请重新登录</p>
+        <p v-if="isTokenValid && !isInRange" style="color: #faad14;">当前位置超出500米范围，无法签到</p>
+    </div>
+    <!--高德地图API-->
+    <script src="https://webapi.amap.com/maps?v=2.0&key=dba30e1282630da08d05f4ac62476083&plugin=AMap.Geolocation"></script>
+    <!-- 将signIn.js移至body末尾，确保#app已加载 -->
+    <script src="/js/signIn.js"></script>
+</body>
+</html>

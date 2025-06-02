@@ -1,0 +1,13 @@
+spring:
+  config:
+    import: "configserver:http://localhost:8888"  # 指向 Config Server 地址
+  application:
+    name: userClient  # 客户端应用名（对应 Config Server 中的 {application}）
+  profiles:
+    active: dev         # 环境（对应 Config Server 中的 {profile}）
+    
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh
