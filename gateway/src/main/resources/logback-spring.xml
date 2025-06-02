@@ -1,0 +1,58 @@
+<configuration>
+    <!-- 公共配置：控制台输出 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 定义 DEBUG 级别的 Appender（RouteDefinitionRouteLocator） -->
+    <appender name="DEBUG_ROUTE_APPENDER" class="ch.qos.logback.core.FileAppender">
+        <file>logs/debug_routes.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <!-- 仅接受 DEBUG 级别日志 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- 定义 TRACE 级别的 Appender（ReactiveLoadBalancerClientFilter） -->
+    <appender name="TRACE_FILTER_APPENDER" class="ch.qos.logback.core.FileAppender">
+        <file>logs/trace_filters.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <!-- 仅接受 TRACE 级别日志 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>TRACE</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- 配置指定类的 Logger -->
+    <logger 
+        name="org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator" 
+        level="DEBUG" 
+        additivity="false"
+    >
+        <appender-ref ref="DEBUG_ROUTE_APPENDER" />
+    </logger>
+
+    <logger 
+        name="org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter" 
+        level="TRACE" 
+        additivity="false"
+    >
+        <appender-ref ref="TRACE_FILTER_APPENDER" />
+    </logger>
+
+    <!-- 根 Logger 保留控制台输出 -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+    </root>
+</configuration>

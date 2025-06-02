@@ -1,0 +1,95 @@
+costom:
+  myip: "http://localhost:8120"
+
+server:
+  port: 8110
+spring:
+  application:
+    name: gateway
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+  devtools:
+    restart:
+      enabled: true  #设置开启热部署
+      additional-paths: src/main #重启目录
+      exclude: WEB-INF/**
+  freemarker:
+    cache: false    #页面不加载缓存，修改即时生效
+  cloud:
+    gateway:
+      routes:
+      - id: userLogin
+        uri: lb://userClient
+        predicates:
+        - Path=/userLoginHTML,/css/**,/js/**,/api/userLogin
+        
+      - id: signIn-location
+        uri: lb://userClient
+        predicates:
+        - Path=/getLocation/**
+        
+      - id: signIn
+        uri: lb://userClient
+        predicates:
+        - Path=/signIn
+        
+      - id: checkSignIn
+        uri: lb://userClient
+        predicates:
+        - Path=/api/checkSignIn/**
+        
+      - id: signIn-request-to-worktime
+        uri: lb://workTime
+        predicates:
+        - Path=/time/checkSignIn/**
+        
+      - id: setLocation
+        uri: lb://workTime
+        predicates:
+        - Path=/setLocation/**
+        
+      - id: manager-login
+        uri: lb://login
+        predicates:
+        - Path=/api/login/**
+        
+      - id: validate-user-token
+        uri: lb://userClient
+        predicates:
+        - Path=/api/validateToken/**
+      discovery:
+        locator:
+          enabled: true
+      globalcors:
+          cors-configurations:
+           '[/**]':
+            allowed-origins:
+            - "${costom.myip}"
+            - "http://localhost:8110"
+            allowed-methods:
+             - GET
+             - POST
+             - PUT
+             - OPTIONS
+            allowed-headers: "*"
+            allow-credentials: true
+            exposed-headers:
+            - "Set-Cookie"
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    instance-id: gateway
+    prefer-ip-address: true
+    
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.http.server.reactive: DEBUG
+    
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: refresh
